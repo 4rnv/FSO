@@ -1,0 +1,48 @@
+Setting up React project
+> npm create vite@latest introdemo -- --template react
+
+Gives you boilerplate code. This can also be used for other JS frameworks like Vue, Svelte and even vanilla JS.
+
+App.jsx file contains all components which have been defined. Each React component must be Capitalized.
+
+It is possible to pass data to components using so-called props.
+
+`const Hello = (props) => {
+  return (
+    <div>
+
+      <p>Hello {props.name}</p>
+    </div>
+  )
+}
+
+const App = () => {
+  return (
+    <div>
+      <h1>Greetings</h1>
+
+      <Hello name='Touka' />
+      <Hello name='Rikka' />
+    </div>
+  )
+}`
+
+As seen above, content of a React component needs to contain one root element in the return statement. If, for some reason you want to return components separately then you could return them as an array.
+`const App = () => {
+  return [
+    <h1>Greetings</h1>,
+    <Hello name='Rikka' age={15 + 12} />,
+    <Footer />
+  ]
+}`
+
+Or we can keep the root element empty
+`return (
+    <>
+    <p>Vanishment this world!</p>
+    </>
+)`
+This is called fragmenting.
+
+Objects are not valid as a React child. You cannot send an object directly to a component for rendering. At best, you can render the object fields separately.
+    <p>{person[0].name} {person[0].age}</p>
