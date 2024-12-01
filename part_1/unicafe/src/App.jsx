@@ -10,21 +10,35 @@ const Statistics = ({good,neutral,bad}) => {
       </>
     )
   }
-  const calcAverage = (good,neutral,bad) => {
-    const average = (good*1 - bad*1)/(good+neutral+bad)
-    return average
-  }
+  const average = (good*1 - bad*1)/(good+neutral+bad);
+  const sum = good+neutral+bad;
+  let percentage = good*100/(good+neutral+bad);
+  percentage=percentage+'%';
 
   return (
-    <>
+    <table>
     <h1>Statistics</h1>
-    <p>Good: {good}</p>
-    <p>Neutral: {neutral}</p>
-    <p>Bad: {bad}</p>
-    <p>All: {good+neutral+bad}</p>
-    <p>Average: {calcAverage(good,neutral,bad)}</p>
-    <p>Positive Percentage: {good*100/(good+neutral+bad)}%</p>
-    </>
+    <StatisticLine text="Good:" value ={good} />
+    <StatisticLine text="Neutral:" value ={neutral} />
+    <StatisticLine text="Bad:" value ={bad} />
+    <StatisticLine text="All:" value ={sum} />
+    <StatisticLine text="Average" value ={average} />
+    <StatisticLine text="Percentage: " value ={percentage} />
+    </table>
+  )
+}
+
+const StatisticLine = ({text,value}) => {
+  return (
+    <tr><td>{text}</td> <td>{value}</td></tr>
+  )
+}
+
+const Button = (props) => {
+  return (
+    <button onClick={props.onClick}>
+      {props.text}
+    </button>
   )
 }
 
@@ -52,9 +66,9 @@ const App = () => {
   return (
     <div>
       <h1>Give Feedback</h1>
-      <button onClick={incrementGood}>Good</button>
-      <button onClick={incrementNeutral}>Neutral</button>
-      <button onClick={incrementBad}>Bad</button>
+      <Button text='Good' onClick={incrementGood}/>
+      <Button text='Neutral' onClick={incrementNeutral}/>
+      <Button text='Bad' onClick={incrementBad}/>
       <Statistics good={good} neutral={neutral} bad={bad}/>
     </div>
   )
