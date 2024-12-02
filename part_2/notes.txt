@@ -1,0 +1,11 @@
+Rendering lists in React
+Forms in React
+Fetch data from server
+Styling
+
+Map Function
+
+const result = notes.map(note => note.id)
+console.log(result)
+
+Creates a new array with ids of each note [1,2,3]
