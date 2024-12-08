@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import connect from './services/connect'
 
 const PersonForm = ({addPerson, newName, handleNewName, newNumber, handleNewNumber}) => {
   return (
@@ -17,13 +19,13 @@ const Search = ({searchTerm, handleSearchTerm}) => {
   return (<input type="text" placeholder='Search' value={searchTerm} onChange={handleSearchTerm}/>)
 }
 
-const ListOfPeople = ({filteredPersons}) => {
+const ListOfPeople = ({filteredPersons, handleDelete}) => {
   return (
     <>
     <h2>List of Persons</h2>
     <ul style={{ listStyleType: 'upper-roman' }}>
       {filteredPersons.map(person => (
-        <li key={person.id}>{person.name} {person.number}</li>
+        <li key={person.id}>{person.name} {person.number}<button onClick={() => handleDelete(person)}>Delete</button></li>
       ))}
     </ul>
     </>
@@ -31,62 +33,83 @@ const ListOfPeople = ({filteredPersons}) => {
 }
 
 const App = () => {
-    const [persons, setPersons] = useState([
-      { name: 'Jean Roque Raltique', number: '040-123456', id: 1 },
-      { name: 'Nadia la Arwall', number: '39-44-5323523', id: 2 },
-      { name: 'Grandis Granva', number: '12-43-234345', id: 3 },
-      { name: 'Marie en Carlsberg', number: '39-23-6423122', id: 4 }
-    ])
+    const [persons, setPersons] = useState([])
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+
+  useEffect(() => {
+    connect.getAll().then(response => {
+        setPersons(response.data)
+      })
+  }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
       name: newName.trim(),
       number: newNumber.trim(),
-      id: persons.length + 1,
+      id: String(persons.length + 1),
 
     }
-    if(personAlreadyExists()) {
-      alert(`${newName} already exists in phonebook`)
+    const existingPerson = persons.find(person => person.name === personObject.name)
+
+    if(existingPerson) {
+      if(window.confirm(`${personObject.name} already exists in phonebook, would you like to replace their number?`)) {
+        connect.update(existingPerson.id, { ...existingPerson, number: personObject.number })
+        .then(response => {
+          setPersons(persons.map(person => person.id === existingPerson.id ? response.data : person));
+        })
+        .catch(error => {
+          console.error("Error updating person:", error);
+        });
     }
+  }
     else {
-    setPersons(persons.concat(personObject))
+      setPersons(persons.concat(personObject))
+      connect.create(personObject)
+      .then(response => {
+        setNotes(persons.concat(response.data))
+      })
     }
     setNewName('')
     setNewNumber('')
   }
 
   const handleNewName = (event) => {
-    setNewName(event.target.value)
+    setNewName(event.target.value.trim())
   }
 
   const handleNewNumber = (event) => {
-    setNewNumber(event.target.value)
+    setNewNumber(event.target.value.trim())
   }
 
   const handleSearchTerm = (event) => {
-    setSearchTerm(event.target.value)
+    setSearchTerm(event.target.value.trim())
   }
 
-  const personAlreadyExists = () => {
-    if(persons.some(person => person.name === newName)) {
-      return true
+  const handleDelete = (person) => {
+    let id = person.id
+    console.log("Deleting person with ID:", id)
+    if (window.confirm(`Are you sure you want to delete ${person.name}`)) {
+      connect.eliminate(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+        .catch(error => {
+          console.error("Error deleting person:", error)
+        })
     }
-    return false
   }
-
   const filteredPersons = persons.filter(person => person.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
   return (
     <div>
       <h2>Phonebook</h2>
       <Search searchTerm={searchTerm} handleSearchTerm={handleSearchTerm}/>
-      <ListOfPeople filteredPersons={filteredPersons}/>
-      <PersonForm addPerson={addPerson} newName={newName} handleNewName={handleNewName} newNumber={newNumber} handleNewNumber={handleNewNumber} />
+      <ListOfPeople filteredPersons={filteredPersons} handleDelete={handleDelete}/>
+      <PersonForm addPerson={addPerson} newName={newName} handleNewName={handleNewName} newNumber={newNumber} handleNewNumber={handleNewNumber}/>
     </div>
   )
 }
