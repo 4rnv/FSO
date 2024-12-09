@@ -1,0 +1,43 @@
+body {
+  /* background: linear-gradient(135deg,rgb(214, 26, 95),rgb(13, 88, 208)); */
+  background: #121212;
+  background-repeat: no-repeat;
+  height: 100vh;
+  color: white;
+  font-size: 1rem;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+li {
+  padding-top: 3px;
+  }
+  
+.message {
+  color: red;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 1rem;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+button, input {
+  appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  border: 0px solid white;
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+  color: rgb(221, 221, 221);
+  font-family: 'Courier New', Courier, monospace;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  margin: 5px;
+  transition: all 0.3s;
+}
+
+button:hover, input:hover {
+  background-color: rgba(255, 255, 255, 0.29);
+  border-radius: 10px 0;
+}

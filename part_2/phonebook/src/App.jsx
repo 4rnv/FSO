@@ -32,12 +32,24 @@ const ListOfPeople = ({filteredPersons, handleDelete}) => {
   )
 }
 
-const App = () => {
-    const [persons, setPersons] = useState([])
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
 
+  return (
+    <div className='message'>
+      {message}
+    </div>
+  )
+}
+
+const App = () => {
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [newMessage, setMessage] = useState('')
 
   useEffect(() => {
     connect.getAll().then(response => {
@@ -59,18 +71,22 @@ const App = () => {
       if(window.confirm(`${personObject.name} already exists in phonebook, would you like to replace their number?`)) {
         connect.update(existingPerson.id, { ...existingPerson, number: personObject.number })
         .then(response => {
-          setPersons(persons.map(person => person.id === existingPerson.id ? response.data : person));
+          setPersons(persons.map(person => person.id === existingPerson.id ? response.data : person))
+          setMessage(`Edited ${existingPerson.name}'s number`)
         })
         .catch(error => {
-          console.error("Error updating person:", error);
-        });
+          console.error("Error updating person:", error)
+          setMessage("Error updating person")
+          setTimeout(() => {setMessage(null)}, 2000)
+        })
     }
   }
     else {
-      setPersons(persons.concat(personObject))
       connect.create(personObject)
       .then(response => {
-        setNotes(persons.concat(response.data))
+        setPersons(persons.concat(response.data))
+        setMessage(`Added ${personObject.name}`)
+        setTimeout(() => {setMessage(null)}, 2000)
       })
     }
     setNewName('')
@@ -78,7 +94,7 @@ const App = () => {
   }
 
   const handleNewName = (event) => {
-    setNewName(event.target.value.trim())
+    setNewName(event.target.value)
   }
 
   const handleNewNumber = (event) => {
@@ -86,7 +102,7 @@ const App = () => {
   }
 
   const handleSearchTerm = (event) => {
-    setSearchTerm(event.target.value.trim())
+    setSearchTerm(event.target.value)
   }
 
   const handleDelete = (person) => {
@@ -98,7 +114,9 @@ const App = () => {
           setPersons(persons.filter(person => person.id !== id))
         })
         .catch(error => {
-          console.error("Error deleting person:", error)
+          //console.error("Error deleting person:", error)
+          setMessage(`${person.name} has already been deleted from the server`)
+          setTimeout(()=>{setMessage(null)}, 4000)
         })
     }
   }
@@ -107,6 +125,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {newMessage && <Notification message={newMessage} />}
       <Search searchTerm={searchTerm} handleSearchTerm={handleSearchTerm}/>
       <ListOfPeople filteredPersons={filteredPersons} handleDelete={handleDelete}/>
       <PersonForm addPerson={addPerson} newName={newName} handleNewName={handleNewName} newNumber={newNumber} handleNewNumber={handleNewNumber}/>
