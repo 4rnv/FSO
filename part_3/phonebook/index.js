@@ -1,13 +1,17 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
+const path = require('path')
 const app = express()
+app.use(cors())
 app.use(express.json())
+app.use(express.static('dist'))
 morgan.token('post', (req) => { // 'post' is the name of the token
     return JSON.stringify(req.body)
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time :post'))
-
-const data = [
+app.set('views', path.join(__dirname, 'dist'))
+let data = [
     { 
       "id": "1",
       "name": "Arto Hellas", 
@@ -30,9 +34,7 @@ const data = [
     }
 ]
 
-app.get('/', (req, res) => {
-    res.send('<h1>Phonebook</h1>')
-})
+app.get('/', (req, res) => {res.render('index')})
 
 app.get('/info', (req, res) => {
     const time = new Date().toLocaleString()
@@ -54,7 +56,11 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-    const id = req.params.id
+    const id = req.params.id;
+    const personExists = data.some(person => person.id === id)
+    if (!personExists) {
+        return res.status(404).json({ error: `Person with that ID doesn't exist` })
+    }
     data = data.filter(person => person.id !== id)
     res.status(204).end()
 })
@@ -81,8 +87,7 @@ app.post('/api/persons', (req, res) => {
     res.status(201).json(newPerson)
 })
 
-const PORT = 3001
-
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`)
 })
