@@ -3,15 +3,31 @@ mongoose.set('strictQuery', false)
 const url = process.env.MONGO_URI
 mongoose.connect(url)
   .then(result => {
-    console.log('connected to MongoDB')
+    console.log(`${result} connected to MongoDB`)
   })
   .catch(error => {
     console.log('error connecting to MongoDB:', error.message)
   })
 
+const phoneNoValidate = (number) => {
+  const phonePattern = /^\d{2,3}-\d+/
+  return phonePattern.test(number) && number.length >= 8
+}
+
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+    name: {
+    type: String,
+    minLength: 3,
+    required: true
+  },
+    number: {
+      type: String,
+      validate: {
+        validator: phoneNoValidate,
+        message: props => `${props.value} is not a valid phone number!`
+      },
+      minLength: 8,
+    },
 })
 
 personSchema.set('toJSON', {

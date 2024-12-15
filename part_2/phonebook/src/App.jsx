@@ -87,6 +87,10 @@ const App = () => {
         setPersons(persons.concat(response.data))
         setMessage(`Added ${personObject.name}`)
         setTimeout(() => {setMessage(null)}, 2000)
+      }).catch(error => {
+        console.log(error.response.data.error)
+        setMessage(`${error.response.data.error}`)
+        setTimeout(() => {setMessage(null)}, 2000)
       })
     }
     setNewName('')

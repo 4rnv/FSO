@@ -5,9 +5,9 @@ if (process.argv.length < 3) {
   process.exit(1)
 }
 
-const password = process.argv[2]
+//const password = process.argv[2]
 
-const url = process.env.MONGODB_URI;
+const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery', false)
 
@@ -43,7 +43,7 @@ if (process.argv.length === 3) { // Only password as argument
   })
 
   person.save().then(result => {
-    console.log(`added ${name} number ${number} to phonebook`)
+    console.log(`${result} added ${name} number ${number} to phonebook`)
     mongoose.connection.close()
   }).catch(error => {
     console.error('Error saving person:', error.message)

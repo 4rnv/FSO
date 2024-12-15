@@ -3,9 +3,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const path = require('path')
 require('dotenv').config()
-const mongoose = require('mongoose')
 const Person = require('./models/person')
-const { error } = require('console')
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -18,7 +16,6 @@ app.get('/', (req, res) => {res.render('index')})
 
 app.get('/info', (req, res) => {
     const time = new Date().toLocaleString()
-    data = []
     Person.find({}).then(persons => {
       res.send(`<strong>Phonebook has info for ${persons.length} people</strong><br><p>Request received at time ${time}</p>`)
     })
@@ -50,14 +47,14 @@ app.delete('/api/persons/:id', async (req, res) => {
     const result = await Person.findByIdAndDelete(req.params.id)
     if (result) {
       res.status(204).end()
-    } 
+    }
     else {
       res.status(404).json({ error: `Person with ID ${req.params.id} doesn't exist` })
     }
-  } catch (error) {res.status(400).send('Invalid ID')}
+  } catch (error) {res.status(400).send(`${error} Invalid ID`)}
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
     const { name, number } = req.body
 
     if (!name || !number) {
@@ -68,11 +65,9 @@ app.post('/api/persons', (req, res) => {
         name: name,
         number: number,
       })
-    
     person.save().then(savedPerson => {
         res.json(savedPerson)
-      })
-
+      }).catch(error => next(error))
     // const existingPerson = data.find(person => person.name === name)
     // if (existingPerson) {
     //     return res.status(400).json({ error: 'Name must be unique' })
@@ -94,14 +89,15 @@ app.put('/api/persons/:id', (req, res, next) => {
       return res.status(400).json({ error: 'Name or number is missing' })
   }
 
-  Person.findByIdAndUpdate(req.params.id, { name, number }, { new: true})
+  Person.findByIdAndUpdate(req.params.id, { name, number }, { new: true, runValidators: true })
       .then(updatedPerson => {
-          if (updatedPerson) {
+        if (updatedPerson) {
               res.json(updatedPerson)
-          } else {
+            }
+          else {
               res.status(404).json({ error: `Person with ID ${req.params.id} doesn't exist` })
-          }
-      })
+            }
+        })
       .catch(error => next(error))
 })
 
@@ -116,6 +112,9 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message)
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  }
+  else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
   next(error)
 }
