@@ -1,0 +1,73 @@
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+  "title": "Holes in the Holy",
+  "author": "Fox",
+  "url": "abc.xyz",
+  "likes": 29
+}
+
+###
+
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+  "title": "That should be upside down",
+  "author": "Fox",
+  "url": "abc.xyz",
+  "likes": 6
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hbWkiLCJpZCI6IjY3YmUxNTVkN2E2ZDkyM2E4M2EwNDhiOCIsImlhdCI6MTc0MDU3MTg1NCwiZXhwIjoxNzQwNTc1NDU0fQ.ckUzSJmg8lmUsUJc_B2oPQ9U78l8MFsaXpsYBJKawOg
+
+{
+  "title": "Made by Mami logged in",
+  "author": "Snake",
+  "url": "abc.xyz",
+  "likes": 3
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imt5b3VrbyIsImlkIjoiNjdiZjBiMGYxMGZlMjM1MzMzOWEwZjk5IiwiaWF0IjoxNzQwNTczNDk1LCJleHAiOjE3NDA1NzcwOTV9.9IFhRpHRnDdygY8af14eRNVkAIPo6HfH5m4T_Fr9gLE
+
+{
+  "title": "Ich liebe Apfel (logged in Kyouko)",
+  "author": "Raccoon",
+  "url": "abc.xyz",
+  "likes": 1
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNheWFrYSIsImlkIjoiNjdiZWU1ZDIwMzRkN2E5ZWVhYjA2YzRiIiwiaWF0IjoxNzQwNTc5ODkzLCJleHAiOjE3NDA1ODM0OTN9.iwdKSJzzWJtE6JC2Mc5gTjbTZG9Cr7zTlPEieYSnSe8
+
+{
+  "title": "Why so Blue?",
+  "author": "Dog",
+  "url": "abc.xyz",
+  "likes": 16
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imt5b3VrbyIsImlkIjoiNjdiZjBiMGYxMGZlMjM1MzMzOWEwZjk5IiwiaWF0IjoxNzQwNTgxOTc4LCJleHAiOjE3NDA1ODU1Nzh9.Nym7Lme8cCtX2Ipky-XhsbOItSGTBE-VE1H7IOKqspI
+
+{
+  "title": "Kyouko blog 2",
+  "author": "Raccoon",
+  "url": "abc.xyz",
+  "likes": 9
+}
