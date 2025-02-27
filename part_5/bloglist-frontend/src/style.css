@@ -1,0 +1,14 @@
+body {
+    margin: 1rem;
+    /* background:linear-gradient(rgb(255, 105, 187),rgb(76, 152, 252)); */
+    height: 100vh;
+}
+
+.message {
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border-style: solid;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
