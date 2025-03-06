@@ -1,61 +1,29 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import BlogForm from './components/Blogform'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import PropTypes from 'prop-types'
 
-const ListofBlogs = ( { blogs, user, handleLogout, addBlog, updateBlog, deleteBlog } ) => {
+const ListofBlogs = ( { blogs, user, handleLogout, addBlog, updateBlog, deleteBlog, currentUser } ) => {
   return (
   <>
   <h2>Logged in as {user.name}</h2>
   <button onClick={handleLogout}>Logout</button>
   <h2>Blogs</h2>
+  <div className='blogs' data-testid='blogs'>
   {blogs.map(blog =>
-    <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog}/>
+    <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} currentUser={currentUser}/>
   )}
+  </div>
   <BlogForm addBlog={addBlog}/>
   </>)
 }
 
-const BlogForm = ({ addBlog }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-  const [blogFormVisible, setBlogFormVisible] = useState(false)
-  const blogButtonHide = { display: blogFormVisible ? 'none' : '' }
-  const blogShow = { display: blogFormVisible ? '' : 'none' }
-
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    addBlog({ title,author,url })
-    setTitle('')
-    setAuthor('')
-    setUrl('')
-  }
-
-  return (
-    <>
-    <button style={blogButtonHide} onClick={() => setBlogFormVisible(true)}>Create New Blog</button>
-    <div style={blogShow}>
-    <form onSubmit={handleSubmit} style={{ display:'flex',flexDirection:'column',maxWidth:'min-content' }}>
-      <label htmlFor="title">Title</label>
-      <input name="title" required value={title} type="text" onChange={({ target }) => setTitle(target.value)} />
-      <label htmlFor="author">Author</label>
-      <input name="author" required value={author} type="text" onChange={({ target }) => setAuthor(target.value)} />
-      <label htmlFor="url">URL</label>
-      <input name="url" required value={url} type="text" onChange={({ target }) => setUrl(target.value)} />
-      <button type="submit">Add Blog</button>
-      <button onClick={() => setBlogFormVisible(false)}>cancel</button>
-    </form>
-    </div>
-    </>
-  )
-}
-
 const LoginForm = ({ handleLogin,setUsername, setPassword, username,password }) => {
   return (<>
-  <form onSubmit={handleLogin} style={{ display:'flex',flexDirection:'column',maxWidth:'min-content' }}>
+  <form id='login-form' data-testid='login-form' onSubmit={handleLogin} style={{ display:'flex',flexDirection:'column',maxWidth:'min-content' }}>
         <label htmlFor="username">Username</label>
         <input name="username" value={username} type="text" onChange={({ target }) => setUsername(target.value)}/>
         <label htmlFor="password">Password</label>
@@ -154,7 +122,7 @@ const App = () => {
     <div>
       <Notification message={message} type={message && message.toLowerCase().includes('error') ? 'error' : 'non-error'} />
       {user===null && <LoginForm handleLogin={handleLogin} setUsername={setUsername} setPassword={setPassword} username={username} password={password}/>}
-      {user!==null && <ListofBlogs blogs={blogs.sort(sortByLikes)} user={user} handleLogout={handleLogout} addBlog={addBlog} updateBlog={updateBlog} deleteBlog={deleteBlog}/>}
+      {user!==null && <ListofBlogs blogs={blogs.sort(sortByLikes)} user={user} handleLogout={handleLogout} addBlog={addBlog} updateBlog={updateBlog} deleteBlog={deleteBlog} currentUser={user}/>}
     </div>
   )
 }

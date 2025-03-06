@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, updateBlog, deleteBlog }) => {
+const Blog = ({ blog, updateBlog, deleteBlog, currentUser }) => {
   const [detailsVisible, setDetailsVisible] = useState(false)
   const [blogObject, setBlogObject] = useState(blog)
 
@@ -11,6 +11,8 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
 
   const handleLike = async () => {
     const updatedBlog = {
+      // ...blogObject,
+      // likes: blogObject.likes + 1
       ...blog,
       likes: blog.likes + 1
     }
@@ -31,18 +33,20 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       <strong>{blog.title} </strong>
-      <span>Author: {blog.author}</span>
+      <span>Author: </span><span>{blog.author}</span>
       <button onClick={toggleDetails}>
         {detailsVisible ? 'Hide Details' : 'Show Details'}
       </button>
       {detailsVisible && (
         <div>
           <p>URL: {blog.url}</p>
-          <p>Likes: {blogObject.likes} <button onClick={handleLike}>Like</button></p>
+          <p className='likes'>Likes: {blogObject.likes}</p><button onClick={handleLike}>Like</button>
           <p>Added by: {blogObject.user ? blogObject.user.name : 'Anonymous'}</p>
-          <button onClick={() => deleteBlog(blog)}>Delete</button>
+          {currentUser.username === blogObject.user.username && (
+            <button onClick={() => deleteBlog(blog)}>Delete</button>
+          )}
         </div>
       )}
     </div>

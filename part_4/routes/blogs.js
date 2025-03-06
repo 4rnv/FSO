@@ -83,4 +83,10 @@ blogsRouter.put('/:id', async (request, response) => {
   }
 })
 
+blogsRouter.post('/reset', async (request, response) => {
+  await Blog.deleteMany({})
+
+  response.status(204).end()
+})
+
 module.exports = blogsRouter
