@@ -131,7 +131,7 @@ describe('When logged in', () => {
             higher = likes
           }
 
-          await expect(higger).toBeGreaterThanOrEqual(likes)
+          await expect(higher).toBeGreaterThanOrEqual(likes)
         }
     })
 })
