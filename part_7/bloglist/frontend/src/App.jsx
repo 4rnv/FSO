@@ -53,13 +53,14 @@ const Navigation = () => {
     display: 'flex',
     gap: '1rem',
     fontSize: '1rem',
-    background: '#ccc'
+    background: '#ddd',
+    textDecoration: 'none'
   }
   return (
     <div style={style}>
-      <Link to='/'>Home</Link>
-      <Link to='/users'>Users</Link>
-      <Link to='/blogs'>Blogs</Link>
+      <Link to='/' style={{textDecoration: 'none'}}>Home</Link>
+      <Link to='/users' style={{textDecoration: 'none'}}>Users</Link>
+      <Link to='/blogs' style={{textDecoration: 'none'}}>Blogs</Link>
     </div>
   )
 }
@@ -111,12 +112,11 @@ const App = () => {
       'Authorization': `Bearer ${user.token}`
     }
     await dispatch(createBlog(newBlog, headers))
-    dispatch(setNotification({ message: `A new blog "${savedBlog.title}" writter by ${savedBlog.author} added by user ${user.name}`, type: 'success' }))
+    dispatch(setNotification({ message: `A new blog ${newBlog.title} added by ${user.name}`, type: 'success' }))
     setTimeout(() => { dispatch(clearNotification()) }, 5000)
   }
 
   const updateBlog = (updatedBlog) => {
-    //setBlogs(blogs.map(blog => (blog.id === updatedBlog.id ? updatedBlog : blog)))
     dispatch(likeBlog(updatedBlog))
   }
 
@@ -141,7 +141,7 @@ const App = () => {
 
   return (
     <Router>
-      <div>
+      <div className="container">
         <Notification />
         <Navigation />
         <Routes>

@@ -7,7 +7,7 @@ const getAll = () => {
 }
 
 const createBlog = (newBlog, headers) => {
-  const request = axios.post(baseUrl,newBlog,{ headers:headers })
+  const request = axios.post(baseUrl, newBlog, { headers: headers })
   return request.then(response => response.data)
 }
 
@@ -17,8 +17,13 @@ const updateBlog = async (id, updatedBlog) => {
 }
 
 const deleteBlog = async (id, headers) => {
-  const response = await axios.delete(`${baseUrl}/${id}`,{ headers:headers })
+  const response = await axios.delete(`${baseUrl}/${id}`, { headers: headers })
   return response.data
 }
 
-export default { getAll, createBlog, updateBlog, deleteBlog }
+const addComment = async (comment, id, headers) => {
+  const response = await axios.post(`${baseUrl}/${id}/comments`, { comment }, { headers: headers })
+  return response.data
+}
+
+export default { getAll, createBlog, updateBlog, addComment, deleteBlog }
