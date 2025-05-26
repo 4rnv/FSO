@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/Blogform'
@@ -9,12 +9,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setNotification, clearNotification, } from './reducers/notificationReducer'
 import { initializeBlogs, createBlog, likeBlog, deleteBlogFromServer, } from './reducers/blogReducer'
 import { setUser, clearUser } from './reducers/userReducer'
+import Users from './components/Users'
+import User from './components/User'
+import { Routes, Route, Link, BrowserRouter as Router } from 'react-router-dom'
+import BlogDetails from './components/BlogDetails'
 
 const ListofBlogs = ({ blogs, user, handleLogout, addBlog, updateBlog, deleteBlog, currentUser }) => {
   return (
     <>
-      <h2>Logged in as {user.name}</h2>
-      <button onClick={handleLogout}>Logout</button>
       <h2>Blogs</h2>
       <div className='blogs' data-testid='blogs'>
         {blogs.map(blog =>
@@ -45,9 +47,25 @@ LoginForm.propTypes = {
   password: PropTypes.string.isRequired
 }
 
+const Navigation = () => {
+  const style = {
+    padding: '1rem',
+    display: 'flex',
+    gap: '1rem',
+    fontSize: '1rem',
+    background: '#ccc'
+  }
+  return (
+    <div style={style}>
+      <Link to='/'>Home</Link>
+      <Link to='/users'>Users</Link>
+      <Link to='/blogs'>Blogs</Link>
+    </div>
+  )
+}
+
 const App = () => {
   const blogs = useSelector((state) => state.blogs)
-  const blogFormRef = useRef()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const user = useSelector((state) => state.user)
@@ -56,7 +74,8 @@ const App = () => {
     const loggedInUser = window.localStorage.getItem('loggedInUser')
     if (loggedInUser) {
       const user = JSON.parse(loggedInUser)
-      dispatch(setUser(user))    }
+      dispatch(setUser(user))
+    }
     blogService.getAll().then(blogs =>
       dispatch(initializeBlogs())
     )
@@ -121,11 +140,27 @@ const App = () => {
   const sortByLikes = (aBlog, bBlog) => bBlog.likes - aBlog.likes
 
   return (
-    <div>
-      <Notification />
-      {user === null && <LoginForm handleLogin={handleLogin} setUsername={setUsername} setPassword={setPassword} username={username} password={password} />}
-      {user !== null && <ListofBlogs blogs={[...blogs].sort(sortByLikes)} user={user} handleLogout={handleLogout} addBlog={addBlog} updateBlog={updateBlog} deleteBlog={handleDeleteBlog} currentUser={user} />}
-    </div>
+    <Router>
+      <div>
+        <Notification />
+        <Navigation />
+        <Routes>
+          <Route path='/' element={user === null
+            ?
+            <LoginForm handleLogin={handleLogin} setUsername={setUsername} setPassword={setPassword} username={username} password={password} />
+            :
+            <div>
+              <h2>Logged in as {user.name}</h2>
+              <button onClick={handleLogout}>Logout</button>
+              {user !== null && <ListofBlogs blogs={[...blogs].sort(sortByLikes)} user={user} handleLogout={handleLogout} addBlog={addBlog} updateBlog={updateBlog} deleteBlog={handleDeleteBlog} currentUser={user} />}
+            </div>} />
+          <Route path='/users' element={<Users />} />
+          <Route path='/users/:id' element={<User />} />
+          <Route path='/blogs' element={<ListofBlogs blogs={[...blogs].sort(sortByLikes)} user={user} handleLogout={handleLogout} addBlog={addBlog} updateBlog={updateBlog} deleteBlog={handleDeleteBlog} currentUser={user} />} />
+          <Route path='/blogs/:id' element={<BlogDetails />} />
+        </Routes>
+      </div>
+    </Router>
   )
 }
 
